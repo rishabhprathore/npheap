@@ -47,6 +47,8 @@ extern struct miscdevice npheap_dev;
 
 int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
 {
+    __u64 offset = vma->offset;
+    __u64 start_address = vma->vm_start;
     return 0;
 }
 
