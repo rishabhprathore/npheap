@@ -80,6 +80,7 @@ struct object_store * get_object(__u64 offset) {
                 return (((struct object_store *)pos));
             }
         printk("This should not get printed");
+        return NULL;
         }
     }
 
@@ -87,7 +88,7 @@ struct object_store * get_object(__u64 offset) {
 struct object_store * insert_object(__u64 offset) {
 
 	struct object_store *new = (struct object_store*)kmalloc(sizeof(struct object_store),GFP_KERNEL);
-	
+	memset(new, 0, sizeof(struct object_store));
 	new->size = 0;
 	new->offset = offset;
 	new->virt_addr = 0;
@@ -162,6 +163,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
     __u64 size = vma->vm_start - vma->vm_end;
     unsigned long start_address = vma->vm_start;
     unsigned long end_address = vma->vm_end;
+    unsigned long obj_phy_addr = 0;
 
     // check if object exists in list
     object = get_object(offset);
@@ -171,7 +173,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
     }
     if(object->virt_addr == 0){
         object->virt_addr = (unsigned long)kmalloc(size, GFP_KERNEL);
-        memset(object->virt_addr, 0, size);
+        memset((void *)object->virt_addr, 0, size);
         object->size = size;
     }
     if(!object->virt_addr){
@@ -179,7 +181,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
         return -EAGAIN;
     }
     //get physical address from virtual address
-    unsigned long obj_phy_addr = __pa(object->virt_addr) << PAGE_SHIFT;
+    obj_phy_addr = __pa(object->virt_addr) << PAGE_SHIFT;
     // object_store = insert_object();
     // make entry in page table of process
     if (remap_pfn_range(vma, start_address, obj_phy_addr,
