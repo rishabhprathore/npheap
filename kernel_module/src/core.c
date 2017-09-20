@@ -121,7 +121,7 @@ void delete_object(__u64 offset) {
 }
 
 // Deletes the entire linked-list
-void delete_list() {
+void delete_list(void) {
     
     /* @pos:	the &struct list_head to use as a loop cursor.
      * @n:		another &struct list_head to use as temporary storage
@@ -143,7 +143,7 @@ void delete_list() {
 
 
 // Print nodes of linked list
-void list_print() {
+void list_print(void) {
 
 	struct list_head *pos;
 	printk("\nPrinting contents of the linked list:\n");
@@ -174,7 +174,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
         memset(object->virt_addr, 0, size);
         object->size = size;
     }
-    if(!virt_addr){
+    if(!object->virt_addr){
         // error in allocation of memory
         return -EAGAIN;
     }
@@ -198,7 +198,7 @@ int npheap_init(void)
     else
         printk(KERN_ERR "\"npheap\" misc device installed\n");
         /* MOVE TO npheap_init() ---------------------------> */ 
-        INIT_LIST_HEAD(&myobjectlist.head_of_list);
+        INIT_LIST_HEAD(myobjectlist->head_of_list);
 
     return ret;
 }
