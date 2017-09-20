@@ -69,7 +69,7 @@ struct object_store * insert_object(__u64 offset) {
 	new->offset = offset;
 	new->virt_addr = 0;
 	
-    list_add_tail(&(new->head_of_list), myobjectlist->head_of_list);
+    list_add_tail(&(new->head_of_list), &(myobjectlist->head_of_list);
     return get_object(offset);
 
 }
@@ -88,7 +88,7 @@ void delete_object(__u64 offset) {
 	struct list_head *pos, *temp_store;
 	printk("deleting the list using list_for_each_safe()\n");
 	
-	list_for_each_safe(pos, temp_store, myobjectlist->head_of_list) {
+	list_for_each_safe(pos, temp_store, &(myobjectlist->head_of_list) {
 
 		if(((struct object_store *)pos)->offset == offset) {
 			list_del(pos);
@@ -110,12 +110,12 @@ void delete_list() {
     struct list_head *pos, *temp_store;
     printk("deleting the whole linked-list data structure\n");
     
-    list_for_each_safe(pos, temp_store, myobjectlist->head_of_list) {
+    list_for_each_safe(pos, temp_store, &(myobjectlist->head_of_list) {
 
             list_del(pos);
             kfree(pos);	
     }	
-    myobjectlist->head_of_list->next = myobjectlist->head_of_list->prev;
+    //myobjectlist->head_of_list->next = myobjectlist->head_of_list->prev;
 }
 
 
