@@ -42,24 +42,103 @@
 #include <linux/moduleparam.h>
 #include <linux/poll.h>
 #include <linux/mutex.h>
+#include <linux/list.h>
+
+
+struct object_store {
+	struct list_head head_of_list;  // kernel's list structure 
+	struct mutex resource_lock;
+	__u64 size;
+	__u64 offset;
+	unsigned long virt_addr;
+};
 
 // If exist, return the data.
 long npheap_lock(struct npheap_cmd __user *user_cmd)
 {
+    struct npheap_cmd k_cmd;
+    if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd))){
+        return -EFAULT;
+    }
+    struct object_store *object = NULL;
+    __u64 offset = k_cmd.offset/PAGE_SIZE;
+    object = get_object(offset);
+    if (!object)
+    {
+        // create a new object if does not exist
+        object = insert_object(offset);
+        if (!object)
+        // object creation failed
+            return -EAGAIN;
+    }
+
+    mutex_lock(&object->resource_lock);
     return 0;
 }     
 
 long npheap_unlock(struct npheap_cmd __user *user_cmd)
 {
+    struct npheap_cmd  k_cmd;
+    struct object_store *object = NULL;
+
+    if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
+        return -EFAULT;
+
+    __u64 offset = k_cmd.offset/PAGE_SIZE;
+
+    object = get_object(offset);
+    if (!object)
+    {   
+        // object should exist
+        return -EFAULT;
+    }
+
+    mutex_unlock(&object->resource_lock);
     return 0;
 }
 
 long npheap_getsize(struct npheap_cmd __user *user_cmd)
 {
-    return 0;
+    struct npheap_cmd k_cmd;
+    struct object_store *object = NULL;
+
+    if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
+        return -EFAULT;
+
+    __u64 offset = k_cmd.offset/PAGE_SIZE;
+
+    object = get_object(offset);
+    if (!object)
+    {   
+        // object should exist
+        return -EFAULT;
+    }
+    cmd.size = object->size;
+    if (copy_to_user((void __user *) user_cmd, &k_cmd, sizeof(struct npheap_cmd)))
+        return -EFAULT;
+    return object->size;
 }
 long npheap_delete(struct npheap_cmd __user *user_cmd)
 {
+    struct npheap_cmd  k_cmd;
+    struct heap_object *object = NULL;
+
+    if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
+        return -EFAULT;
+
+    __u64 offset = k_cmd.offset/PAGE_SIZE;
+
+    object = get_object(offset);
+    if (!object)
+    {   
+        // object should exist
+        return -EFAULT;
+    }
+    if(object->virt_addr){
+        kfree((void *) object->virt_addr);
+        object->virt_addr = 0;
+        object->size = 0;
+    }
     return 0;
 }
 
