@@ -54,7 +54,7 @@ struct object_store {
 	unsigned long virt_addr;
 };
 
-struct object_store myobjectlist;		// Declaration-- of List Head
+struct object_store *myobjectlist;		// Declaration-- of List Head
 
 
 
@@ -67,9 +67,9 @@ struct object_store * insert_object(__u64 offset) {
 	
 	new->size = 0;
 	new->offset = offset;
-	new->virt_addr = NULL;
+	new->virt_addr = 0;
 	
-    list_add_tail(new->head_of_list, myobjectlist->head_of_list);
+    list_add_tail(&(new->head_of_list), myobjectlist->head_of_list);
     return get_object(offset);
 
 }
@@ -170,7 +170,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
         //create node in link list
         object = insert_object(offset);
     }
-    if(object->virt_addr == NULL){
+    if(object->virt_addr == 0){
         object->virt_addr = (unsigned long)kmalloc(size, GFP_KERNEL);
         memset(object->virt_addr, 0, size)
         object->size = size;
