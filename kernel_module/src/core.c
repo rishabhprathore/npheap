@@ -79,9 +79,10 @@ struct object_store * get_object(__u64 offset) {
             if(((struct object_store *)pos)->offset == offset) {
                 return (((struct object_store *)pos));
             }
+        
+        }
         printk("This should not get printed");
         return NULL;
-        }
     }
 
 // Inserts a Node at tail of Doubly linked list
