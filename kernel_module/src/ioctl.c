@@ -60,10 +60,10 @@ struct object_store *get_object(__u64 offset);
 // If exist, return the data.
 long npheap_lock(struct npheap_cmd __user *user_cmd){
     struct npheap_cmd k_cmd;
+    struct object_store *object = NULL;
     if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd))){
         return -EFAULT;
     }
-    struct object_store *object = NULL;
     __u64 offset = k_cmd.offset/PAGE_SIZE;
     object = get_object(offset);
     if (!object)
@@ -83,6 +83,7 @@ long npheap_unlock(struct npheap_cmd __user *user_cmd)
 {
     struct npheap_cmd  k_cmd;
     struct object_store *object = NULL;
+    __u64 offset = 0;
 
     if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
         return -EFAULT;
@@ -104,6 +105,7 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
 {
     struct npheap_cmd k_cmd;
     struct object_store *object = NULL;
+    __u64 offset = 0;
 
     if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
         return -EFAULT;
@@ -116,7 +118,7 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
         // object should exist
         return -EFAULT;
     }
-    cmd.size = object->size;
+    k_cmd.size = object->size;
     if (copy_to_user((void __user *) user_cmd, &k_cmd, sizeof(struct npheap_cmd)))
         return -EFAULT;
     return object->size;
@@ -124,7 +126,8 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
 long npheap_delete(struct npheap_cmd __user *user_cmd)
 {
     struct npheap_cmd  k_cmd;
-    struct heap_object *object = NULL;
+    struct object_store *object = NULL;
+    __u64 offset = 0;
 
     if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
         return -EFAULT;
@@ -137,7 +140,7 @@ long npheap_delete(struct npheap_cmd __user *user_cmd)
         // object should exist
         return -EFAULT;
     }
-    if(object->virt_addr){
+    if(object->virt_addr !=0){
         kfree((void *) object->virt_addr);
         object->virt_addr = 0;
         object->size = 0;
