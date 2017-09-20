@@ -171,7 +171,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
     }
     if(object->virt_addr == 0){
         object->virt_addr = (unsigned long)kmalloc(size, GFP_KERNEL);
-        memset(object->virt_addr, 0, size)
+        memset(object->virt_addr, 0, size);
         object->size = size;
     }
     if(!obj_virt_addr){
