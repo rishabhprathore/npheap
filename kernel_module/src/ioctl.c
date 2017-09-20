@@ -61,6 +61,7 @@ struct object_store *get_object(__u64 offset);
 long npheap_lock(struct npheap_cmd __user *user_cmd){
     struct npheap_cmd k_cmd;
     struct object_store *object = NULL;
+    __u64 offset = 0;
     if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd))){
         return -EFAULT;
     }
