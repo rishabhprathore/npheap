@@ -56,12 +56,12 @@ struct object_store {
 	unsigned long virt_addr;
 };
 
-struct object_store *myobjectlist;		// Declaration-- of List Head
+struct list_head myobjectlist;		// Declaration-- of List Head
 
 
 
 // Searches for the desired object-id
-struct object_store * get_object(__u64 offset) {
+struct object_store *get_object(__u64 offset) {
     
     /* This macro creates a for loop that executes once with cursor pointing at
        each successive entry in the list. Be careful about changing the list while
@@ -71,10 +71,10 @@ struct object_store * get_object(__u64 offset) {
     
            list_for_each(pos, head)
      */
-        struct list_head *pos;
+        struct list_head *pos = NULL;
         printk("Searching the list using list_for_each()\n");
         
-        list_for_each(pos, &(myobjectlist->head_of_list)) {
+/*2*/        list_for_each(pos, &myobjectlist {
     
             if(((struct object_store *)pos)->offset == offset) {
                 return (((struct object_store *)pos));
@@ -86,15 +86,17 @@ struct object_store * get_object(__u64 offset) {
     }
 
 // Inserts a Node at tail of Doubly linked list
-struct object_store * insert_object(__u64 offset) {
+struct object_store *insert_object(__u64 offset) {
 
-	struct object_store *new = (struct object_store*)kmalloc(sizeof(struct object_store),GFP_KERNEL);
+    struct object_store *new = (struct object_store*)kmalloc(sizeof(struct object_store),GFP_KERNEL);
+    INIT_LIST_HEAD(&new->head_of_list);
+    mutex_init(&new->mutex);
 	memset(new, 0, sizeof(struct object_store));
 	new->size = 0;
 	new->offset = offset;
 	new->virt_addr = 0;
 	
-    list_add_tail(&(new->head_of_list), &(myobjectlist->head_of_list));
+/*3*/    list_add_tail(&(new->head_of_list), &myobjectlist);
     return get_object(offset);
 
 }
@@ -110,9 +112,10 @@ void delete_object(__u64 offset) {
 
  	list_for_each_safe(pos, n, head)
 */	
-	struct list_head *pos, *temp_store;
+	struct list_head *pos = NULL 
+    struct list_head *temp_store = NULL;
 	printk("deleting the list using list_for_each_safe()\n");	
-	list_for_each_safe(pos, temp_store, &(myobjectlist->head_of_list)) {
+/*4*/	list_for_each_safe(pos, temp_store, &myobjectlist) {
 
 		if(((struct object_store *)pos)->offset == offset) {
 			list_del(pos);
@@ -131,11 +134,14 @@ void delete_list(void) {
     
          list_for_each_safe(pos, n, head)
     */	
-    struct list_head *pos, *temp_store;
+    struct list_head *pos = NULL; 
+    struct list_head *temp_store = NULL;
     printk("deleting the whole linked-list data structure\n");
     
-    list_for_each_safe(pos, temp_store, &(myobjectlist->head_of_list)) {
-
+/*5*/    list_for_each_safe(pos, temp_store, &myobjectlist) {
+            kfree((void *)pos->virt_addr);
+            pos->virt_addr = 0;
+            pos->size=0;
             list_del(pos);
             kfree(pos);	
     }	
@@ -147,11 +153,11 @@ void delete_list(void) {
 // Print nodes of linked list
 void list_print(void) {
 
-	struct list_head *pos;
+	struct list_head *pos = NULL;
 	printk("\nPrinting contents of the linked list:\n");
 
-	list_for_each(pos, &(myobjectlist->head_of_list)) {
-		printk("Size:%lu,\nOffset:%lu,\nVirtual Address:%lu\n\n\n",((struct object_store *)pos)->size,\
+	list_for_each(pos, &myobjectlist) {
+		printk("Size:%llu,\nOffset:%llu,\nVirtual Address:%lu\n\n\n",((struct object_store *)pos)->size,\
 		 ((struct object_store *)pos)->offset, ((struct object_store *)pos)->virt_addr);
 	}
 }
@@ -201,7 +207,7 @@ int npheap_init(void)
     else
         printk(KERN_ERR "\"npheap\" misc device installed\n");
         /* MOVE TO npheap_init() ---------------------------> */ 
-        INIT_LIST_HEAD(&(struct list_head)(myobjectlist->head_of_list));
+        INIT_LIST_HEAD(&myobjectlist);
 
     return ret;
 }
@@ -214,4 +220,3 @@ void npheap_exit(void)
     misc_deregister(&npheap_dev);
     
 }
-
