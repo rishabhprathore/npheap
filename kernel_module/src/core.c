@@ -46,6 +46,12 @@
 
 extern struct miscdevice npheap_dev;
 struct object_store * get_object(__u64 offset);
+void delete_list();
+struct object_store * insert_object(__u64 offset);
+void delete_object(__u64 offset);
+void list_print();
+
+
 struct object_store {
 	struct list_head head_of_list;  // kernel's list structure 
 	struct mutex resource_lock;
@@ -109,7 +115,7 @@ void delete_list() {
     struct list_head *pos, *temp_store;
     printk("deleting the whole linked-list data structure\n");
     
-    list_for_each_safe(pos, temp_store, &(myobjectlist->head_of_list) {
+    list_for_each_safe(pos, temp_store, &(myobjectlist->head_of_list)) {
 
             list_del(pos);
             kfree(pos);	
