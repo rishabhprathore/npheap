@@ -43,7 +43,6 @@
 #include <linux/poll.h>
 #include <linux/mutex.h>
 #include <linux/list.h>
-#include <linux/malloc.h>
 
 extern struct miscdevice npheap_dev;
 
