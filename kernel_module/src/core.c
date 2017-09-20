@@ -45,7 +45,7 @@
 #include <linux/list.h>
 
 extern struct miscdevice npheap_dev;
-
+struct object_store * get_object(__u64 offset);
 struct object_store {
 	struct list_head head_of_list;  // kernel's list structure 
 	struct mutex resource_lock;
