@@ -53,6 +53,10 @@ struct object_store {
 	unsigned long virt_addr;
 };
 
+struct object_store * insert_object(__u64 offset)
+void delete_object(__u64 offset);
+struct object_store * get_object(__u64 offset);
+
 // If exist, return the data.
 long npheap_lock(struct npheap_cmd __user *user_cmd)
 {
@@ -84,7 +88,7 @@ long npheap_unlock(struct npheap_cmd __user *user_cmd)
     if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
         return -EFAULT;
 
-    __u64 offset = k_cmd.offset/PAGE_SIZE;
+    __u64 offset = k_cmd.offset/PAGE_SIZE;  
 
     object = get_object(offset);
     if (!object)
