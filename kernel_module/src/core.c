@@ -43,6 +43,7 @@
 #include <linux/poll.h>
 #include <linux/mutex.h>
 #include <linux/list.h>
+#include <linux/malloc.h>
 
 extern struct miscdevice npheap_dev;
 
@@ -69,7 +70,7 @@ struct object_store * insert_object(__u64 offset) {
 	new->offset = offset;
 	new->virt_addr = 0;
 	
-    list_add_tail(&(new->head_of_list), &(myobjectlist->head_of_list);
+    list_add_tail(&(new->head_of_list), &(myobjectlist->head_of_list));
     return get_object(offset);
 
 }
@@ -86,9 +87,8 @@ void delete_object(__u64 offset) {
  	list_for_each_safe(pos, n, head)
 */	
 	struct list_head *pos, *temp_store;
-	printk("deleting the list using list_for_each_safe()\n");
-	
-	list_for_each_safe(pos, temp_store, &(myobjectlist->head_of_list) {
+	printk("deleting the list using list_for_each_safe()\n");	
+	list_for_each_safe(pos, temp_store, &(myobjectlist->head_of_list)) {
 
 		if(((struct object_store *)pos)->offset == offset) {
 			list_del(pos);
