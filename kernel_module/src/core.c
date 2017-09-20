@@ -174,7 +174,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
         memset(object->virt_addr, 0, size);
         object->size = size;
     }
-    if(!obj_virt_addr){
+    if(!virt_addr){
         // error in allocation of memory
         return -EAGAIN;
     }
