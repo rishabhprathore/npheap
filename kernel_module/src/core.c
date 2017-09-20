@@ -201,7 +201,7 @@ int npheap_init(void)
     else
         printk(KERN_ERR "\"npheap\" misc device installed\n");
         /* MOVE TO npheap_init() ---------------------------> */ 
-        //INIT_LIST_HEAD(&(myobjectlist->head_of_list));
+        INIT_LIST_HEAD(&(struct list_head)(myobjectlist->head_of_list));
 
     return ret;
 }
