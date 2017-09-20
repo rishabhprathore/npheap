@@ -74,7 +74,7 @@ struct object_store * get_object(__u64 offset) {
         struct list_head *pos;
         printk("Searching the list using list_for_each()\n");
         
-        list_for_each(pos, myobjectlist->head_of_list) {
+        list_for_each(pos, &(myobjectlist->head_of_list) {
     
             if(((struct object_store *)pos)->offset == offset) {
                 return (((struct object_store *)pos));
@@ -148,7 +148,7 @@ void list_print() {
 	struct list_head *pos;
 	printk("\nPrinting contents of the linked list:\n");
 
-	list_for_each(pos, myobjectlist->head_of_list) {
+	list_for_each(pos, &(myobjectlist->head_of_list)) {
 		printk("Size:%lu,\nOffset:%lu,\nVirtual Address:%lu\n\n\n",((struct object_store *)pos)->size,\
 		 ((struct object_store *)pos)->offset, ((struct object_store *)pos)->virt_addr);
 	}
