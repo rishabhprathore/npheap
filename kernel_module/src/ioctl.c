@@ -64,7 +64,7 @@ long npheap_lock(struct npheap_cmd __user *user_cmd){
     if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd))){
         return -EFAULT;
     }
-    __u64 offset = k_cmd.offset/PAGE_SIZE;
+    offset = k_cmd.offset/PAGE_SIZE;
     object = get_object(offset);
     if (!object)
     {
@@ -88,7 +88,7 @@ long npheap_unlock(struct npheap_cmd __user *user_cmd)
     if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
         return -EFAULT;
 
-    __u64 offset = k_cmd.offset/PAGE_SIZE;  
+    offset = k_cmd.offset/PAGE_SIZE;  
 
     object = get_object(offset);
     if (!object)
@@ -110,7 +110,7 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
     if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
         return -EFAULT;
 
-    __u64 offset = k_cmd.offset/PAGE_SIZE;
+    offset = k_cmd.offset/PAGE_SIZE;
 
     object = get_object(offset);
     if (!object)
@@ -132,7 +132,7 @@ long npheap_delete(struct npheap_cmd __user *user_cmd)
     if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
         return -EFAULT;
 
-    __u64 offset = k_cmd.offset/PAGE_SIZE;
+    offset = k_cmd.offset/PAGE_SIZE;
 
     object = get_object(offset);
     if (!object)
