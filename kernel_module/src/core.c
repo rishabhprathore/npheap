@@ -45,11 +45,7 @@
 #include <linux/list.h>
 
 extern struct miscdevice npheap_dev;
-struct object_store * get_object(__u64 offset);
-void delete_list();
-struct object_store * insert_object(__u64 offset);
-void delete_object(__u64 offset);
-void list_print();
+
 
 
 struct object_store {
@@ -64,8 +60,29 @@ struct object_store *myobjectlist;		// Declaration-- of List Head
 
 
 
+// Searches for the desired object-id
+struct object_store * get_object(__u64 offset) {
+    
+    /* This macro creates a for loop that executes once with cursor pointing at
+       each successive entry in the list. Be careful about changing the list while
+       iterating through it.
+       @pos: the &struct list_head to use as a loop cursor
+       @head: the head for your list
+    
+           list_for_each(pos, head)
+     */
+        struct list_head *pos;
+        printk("Searching the list using list_for_each()\n");
+        
+        list_for_each(pos, myobjectlist->head_of_list) {
+    
+            if(((struct object_store *)pos)->offset == offset) {
+                return (((struct object_store *)pos));
+            }
+        printk("This should not get printed");
+        }
+    }
 
-/* MOVE TO npheap_init() ---------------------------> When calling insert_object, pass myobjectlist->head_of_list */
 // Inserts a Node at tail of Doubly linked list
 struct object_store * insert_object(__u64 offset) {
 
@@ -123,29 +140,6 @@ void delete_list() {
     //myobjectlist->head_of_list->next = myobjectlist->head_of_list->prev;
 }
 
-
-// Searches for the desired object-id
-struct object_store * get_object(__u64 offset) {
-
-/* This macro creates a for loop that executes once with cursor pointing at
-   each successive entry in the list. Be careful about changing the list while
-   iterating through it.
-   @pos: the &struct list_head to use as a loop cursor
-   @head: the head for your list
-
-   	list_for_each(pos, head)
- */
-	struct list_head *pos;
-	printk("Searching the list using list_for_each()\n");
-	
-	list_for_each(pos, myobjectlist->head_of_list) {
-
-		if(((struct object_store *)pos)->offset == offset) {
-			return (((struct object_store *)pos));
-        }
-    printk("This should not get printed");
-    }
-}
 
 
 // Print nodes of linked list
