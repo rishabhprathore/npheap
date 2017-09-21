@@ -109,7 +109,7 @@ long npheap_unlock(struct npheap_cmd __user *user_cmd)
 
 long npheap_getsize(struct npheap_cmd __user *user_cmd)
 {
-    printk("Inside getsize \n");
+    
     struct npheap_cmd k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
@@ -118,7 +118,7 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
         return -EFAULT;
 
     offset = k_cmd.offset/PAGE_SIZE;
-
+    printk("Inside getsize for offset : %llu \n", offset);
     object = get_object(offset);
     if (!object)
     {   
@@ -128,6 +128,7 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
     k_cmd.size = object->size;
     if (copy_to_user((void __user *) user_cmd, &k_cmd, sizeof(struct npheap_cmd)))
         return -EFAULT;
+    printk("Leaving getsize for offset : %llu size : %llu\n", offset->size);
     return object->size;
 }
 long npheap_delete(struct npheap_cmd __user *user_cmd)
