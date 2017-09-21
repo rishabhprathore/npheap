@@ -59,6 +59,17 @@ struct object_store {
 struct list_head myobjectlist;		// Declaration-- of List Head
 
 
+// Print nodes of linked list
+void list_print(void) {
+    
+    struct list_head *pos = NULL;
+    printk("\nPrinting contents of the linked list:\n");
+
+    list_for_each(pos, &myobjectlist) {
+        printk("Size:%llu,\nOffset:%llu,\nVirtual Address:%lu\n\n\n",((struct object_store *)pos)->size,\
+            ((struct object_store *)pos)->offset, ((struct object_store *)pos)->virt_addr);
+    }
+}
 
 // Searches for the desired object-id
 struct object_store *get_object(__u64 offset) {
@@ -94,9 +105,12 @@ struct object_store *insert_object(__u64 offset) {
 	memset(new, 0, sizeof(struct object_store));
 	new->size = 0;
 	new->offset = offset;
-	new->virt_addr = 0;
+    new->virt_addr = 0;
+    
 	
-/*3*/    list_add_tail(&(new->head_of_list), &myobjectlist);
+    list_add_tail(&(new->head_of_list), &myobjectlist);
+    printk("Leaving insert_object \n");
+    list_print();
     return get_object(offset);
 
 }
@@ -150,19 +164,6 @@ void delete_list(void) {
     //myobjectlist->head_of_list->next = myobjectlist->head_of_list->prev;
 }
 
-
-
-// Print nodes of linked list
-void list_print(void) {
-
-	struct list_head *pos = NULL;
-	printk("\nPrinting contents of the linked list:\n");
-
-	list_for_each(pos, &myobjectlist) {
-		printk("Size:%llu,\nOffset:%llu,\nVirtual Address:%lu\n\n\n",((struct object_store *)pos)->size,\
-		 ((struct object_store *)pos)->offset, ((struct object_store *)pos)->virt_addr);
-	}
-}
 
 int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
 {
