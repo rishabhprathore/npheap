@@ -181,7 +181,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
     // object_store = insert_object();
     // make entry in page table of process
     printk("calling remap_pfn_range with offset %llu \n", offset);
-    if (remap_pfn_range(vma, start_address, obj_phy_addr,
+    if (remap_pfn_range(vma, start_address, __pa(object->virt_addr) >> PAGE_SHIFT,
         size,
         vma->vm_page_prot))
         return -EAGAIN;
