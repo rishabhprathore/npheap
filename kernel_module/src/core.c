@@ -216,6 +216,7 @@ void npheap_exit(void)
     // free all nodes of list
     list_print();
     delete_list();
+    list_print();
     misc_deregister(&npheap_dev);
     
 }
