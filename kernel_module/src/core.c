@@ -161,7 +161,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
     struct object_store *object = NULL; 
     // store properties of vma 
     __u64 offset = vma->vm_pgoff;
-    __u64 size = vma->vm_start - vma->vm_end;
+    __u64 size = vma->vm_end - vma->vm_start;
     unsigned long start_address = vma->vm_start;
     unsigned long end_address = vma->vm_end;
     unsigned long obj_phy_addr = 0;
@@ -169,12 +169,15 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
     // check if object exists in list
     object = get_object(offset);
     if(object == NULL){
+        printk("calling insert from mmap with offset : %llu \n",offset);
         //create node in link list
         object = insert_object(offset);
     }
-    printk("calling kmalloc with offset %llu \n", offset);
-    if(object->virt_addr == 0){
-        object->virt_addr = (unsigned long)kmalloc(size, GFP_KERNEL);
+    
+    if(!object->virt_addr){
+        printk("calling kmalloc with offset %llu \n", offset);
+        object->virt_addr = (unsigned long) (void *)kmalloc(vma->vm_end - vma->vm_start, GFP_KERNEL);
+        printk("after kmalloc with offset %llu \n", offset);
         memset((void *)object->virt_addr, 0, size);
         object->size = size;
     }
@@ -183,14 +186,15 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
         return -EAGAIN;
     }
     //get physical address from virtual address
-    obj_phy_addr = __pa(object->virt_addr) << PAGE_SHIFT;
+    obj_phy_addr = __pa(object->virt_addr) >> PAGE_SHIFT;
     // object_store = insert_object();
     // make entry in page table of process
+    printk("calling remap_pfn_range with offset %llu \n", offset);
     if (remap_pfn_range(vma, start_address, obj_phy_addr,
         end_address - start_address,
         vma->vm_page_prot))
         return -EAGAIN;
-        printk(KERN_INFO "exit npheap_mmap\n");
+    printk(KERN_INFO "exit npheap_mmap\n");
     return 0;
 }
 
