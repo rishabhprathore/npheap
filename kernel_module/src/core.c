@@ -83,13 +83,13 @@ struct object_store *get_object(__u64 offset) {
             return res;
         }
     }
-    printk("%llu not found in list", offset);
+    printk("%llu not found in list\n", offset);
     return NULL;
 }
 
 // Inserts a Node at tail of Doubly linked list
 struct object_store *insert_object(__u64 offset) {
-    printk("Inside insert_object \n");
+    printk("Inside insert_object for offset: %llu\n", offset);
     struct object_store *new = (struct object_store*)kmalloc(sizeof(struct object_store),GFP_KERNEL);
     memset(new, 0, sizeof(struct object_store));
     INIT_LIST_HEAD(&new->head_of_list);
@@ -156,7 +156,7 @@ void delete_list(void) {
 
 int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
 {
-    printk(KERN_INFO "enter npheap_mmap");
+    printk(KERN_INFO "enter npheap_mmap\n");
     struct object_store *object = NULL; 
     // store properties of vma 
     __u64 offset = vma->vm_pgoff;
@@ -188,7 +188,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
         end_address - start_address,
         vma->vm_page_prot))
         return -EAGAIN;
-        printk(KERN_INFO "exit npheap_mmap");
+        printk(KERN_INFO "exit npheap_mmap\n");
     return 0;
 }
 
