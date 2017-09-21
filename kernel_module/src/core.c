@@ -74,13 +74,16 @@ struct object_store *get_object(__u64 offset) {
     struct list_head *pos = NULL;
     struct object_store *res = NULL;
     printk("Search the list for offset: %llu using list_for_each()\n", offset);
+    mutex_lock(&list_lock);
     list_for_each(pos, &myobjectlist){
         res = (struct object_store *) pos;
         if(res->offset == offset) {
+            mutex_unlock(&list_lock);
             printk(" offset: %llu found in list\n", offset);
             return res;
         }
     }
+    mutex_unlock(&list_lock);
     printk("%llu not found in list\n", offset);
     return NULL;
 }
