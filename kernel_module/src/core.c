@@ -113,7 +113,7 @@ void delete_object(__u64 offset) {
 	struct list_head *pos = NULL ;
     struct list_head *temp_store = NULL;
 	printk("deleting the list using list_for_each_safe()\n");	
-/	list_for_each_safe(pos, temp_store, &myobjectlist) {
+	list_for_each_safe(pos, temp_store, &myobjectlist) {
 
 		if(((struct object_store *)pos)->offset == offset) {
 			list_del(pos);
