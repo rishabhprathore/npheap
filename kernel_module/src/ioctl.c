@@ -71,6 +71,7 @@ long npheap_lock(struct npheap_cmd __user *user_cmd){
     if (!object)
     {
         // create a new object if does not exist
+        printk("Calling insert_object from npheap_lock\n");
         object = insert_object(offset);
         if (!object)
         // object creation failed

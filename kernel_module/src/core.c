@@ -87,7 +87,7 @@ struct object_store *get_object(__u64 offset) {
 
 // Inserts a Node at tail of Doubly linked list
 struct object_store *insert_object(__u64 offset) {
-
+    printk("Inside insert_object \n");
     struct object_store *new = (struct object_store*)kmalloc(sizeof(struct object_store),GFP_KERNEL);
     INIT_LIST_HEAD(&new->head_of_list);
     mutex_init(&new->resource_lock);
