@@ -59,7 +59,7 @@ struct object_store *get_object(__u64 offset);
 
 // If exist, return the data.
 long npheap_lock(struct npheap_cmd __user *user_cmd){
-    printk("enter npheap_lock");
+    printk("enter npheap_lock\n");
     struct npheap_cmd k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
@@ -79,13 +79,13 @@ long npheap_lock(struct npheap_cmd __user *user_cmd){
     }
 
     mutex_lock(&object->resource_lock);
-    printk(KERN_INFO "exit npheap_lock");
+    printk(KERN_INFO "exit npheap_lock\n");
     return 0;
 }     
 
 long npheap_unlock(struct npheap_cmd __user *user_cmd)
 {
-    printk(KERN_INFO "enter npheap_unlock");
+    printk(KERN_INFO "enter npheap_unlock\n");
     struct npheap_cmd  k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
@@ -103,12 +103,13 @@ long npheap_unlock(struct npheap_cmd __user *user_cmd)
     }
 
     mutex_unlock(&object->resource_lock);
-    printk(KERN_INFO "exit npheap_unlock");
+    printk(KERN_INFO "exit npheap_unlock\n");
     return 0;
 }
 
 long npheap_getsize(struct npheap_cmd __user *user_cmd)
 {
+    printk("Inside getsize \n");
     struct npheap_cmd k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
@@ -131,6 +132,7 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
 }
 long npheap_delete(struct npheap_cmd __user *user_cmd)
 {
+    
     struct npheap_cmd  k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
@@ -139,7 +141,7 @@ long npheap_delete(struct npheap_cmd __user *user_cmd)
         return -EFAULT;
 
     offset = k_cmd.offset/PAGE_SIZE;
-
+    printk("Inside delete for offset : %llu \n", offset);
     object = get_object(offset);
     if (!object)
     {   
@@ -148,9 +150,10 @@ long npheap_delete(struct npheap_cmd __user *user_cmd)
     }
     if(object->virt_addr !=0){
         kfree((void *) object->virt_addr);
-        object->virt_addr = 0;
-        object->size = 0;
     }
+    object->virt_addr = 0;
+    object->size = 0;
+    printk("Leaving delete for offset : %llu \n", offset);
     return 0;
 }
 
