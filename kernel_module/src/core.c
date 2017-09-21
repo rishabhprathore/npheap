@@ -111,7 +111,7 @@ struct object_store *insert_object(__u64 offset) {
     list_add_tail(&new->head_of_list, &myobjectlist);
     printk("Leaving insert_object \n");
     list_print();
-    return get_object(offset);
+    return new;
 
 }
 
