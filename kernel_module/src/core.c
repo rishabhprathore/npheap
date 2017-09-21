@@ -141,7 +141,7 @@ void delete_list(void) {
     
 /*5*/    list_for_each_safe(pos, temp_store, &myobjectlist) {
             obj_virt_addr = ((struct object_store *)pos)->virt_addr;
-            kfree(((void *)obj_virt_addr);
+            kfree((void *)obj_virt_addr);
             //pos->virt_addr = 0;
             //pos->size=0;
             list_del(pos);
