@@ -164,6 +164,7 @@ void list_print(void) {
 
 int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
 {
+    printk(KERN_INFO "enter npheap_mmap");
     struct object_store *object = NULL; 
     // store properties of vma 
     __u64 offset = vma->vm_pgoff;
@@ -195,7 +196,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
         end_address - start_address,
         vma->vm_page_prot))
         return -EAGAIN;
-
+        printk(KERN_INFO "exit npheap_mmap");
     return 0;
 }
 

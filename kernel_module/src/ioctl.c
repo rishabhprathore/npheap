@@ -59,6 +59,7 @@ struct object_store *get_object(__u64 offset);
 
 // If exist, return the data.
 long npheap_lock(struct npheap_cmd __user *user_cmd){
+    printk(KERN_INFO "enter npheap_lock");
     struct npheap_cmd k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
@@ -77,11 +78,13 @@ long npheap_lock(struct npheap_cmd __user *user_cmd){
     }
 
     mutex_lock(&object->resource_lock);
+    printk(KERN_INFO "exit npheap_lock");
     return 0;
 }     
 
 long npheap_unlock(struct npheap_cmd __user *user_cmd)
 {
+    printk(KERN_INFO "enter npheap_unlock");
     struct npheap_cmd  k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
@@ -99,6 +102,7 @@ long npheap_unlock(struct npheap_cmd __user *user_cmd)
     }
 
     mutex_unlock(&object->resource_lock);
+    printk(KERN_INFO "exit npheap_unlock");
     return 0;
 }
 
