@@ -108,7 +108,7 @@ struct object_store *insert_object(__u64 offset) {
     new->virt_addr = 0;
     
 	
-    list_add_tail(&(new->head_of_list), &myobjectlist);
+    list_add_tail(&new->head_of_list, &myobjectlist);
     printk("Leaving insert_object \n");
     list_print();
     return get_object(offset);
