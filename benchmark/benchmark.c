@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
         memset(mapped_data, 0, 4096);
         a = rand()+1;
         gettimeofday(&current_time, NULL);
-        for(j=0; j < size-10; j=strlen(mapped_data))
+        for(j=strlen(mapped_data); j < size-10; j=strlen(mapped_data))
         {
             sprintf(mapped_data,"%s%d",mapped_data,a);
         }
