@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     }
     sprintf(filename,"npheap.%d.log",(int)getpid());
     fp = fopen(filename,"w");
-    for(i = 0; i <= number_of_objects; i++)
+    for(i = 0; i < number_of_objects; i++)
     {
         npheap_lock(devfd,i);
         size = npheap_getsize(devfd,i);
