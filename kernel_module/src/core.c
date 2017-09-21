@@ -74,7 +74,7 @@ struct object_store *get_object(__u64 offset) {
         struct list_head *pos = NULL;
         printk("Searching the list using list_for_each()\n");
         
-/*2*/        list_for_each(pos, &myobjectlist {
+/*2*/        list_for_each(pos, &myobjectlist){
     
             if(((struct object_store *)pos)->offset == offset) {
                 return (((struct object_store *)pos));
