@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
     }
     srand((int)time(NULL)+(int)getpid());
     // Writing to objects
+    pid=-1;
     for(i=0;i<(number_of_processes-1) && pid != 0;i++)
     {
         pid=fork();
