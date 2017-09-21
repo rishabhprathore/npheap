@@ -194,7 +194,7 @@ int npheap_init(void)
     else
         printk(KERN_ERR "\"npheap\" misc device installed\n");
         /* MOVE TO npheap_init() ---------------------------> */ 
-        mutex_init(&insert_lock);
+        mutex_init(&list_lock);
         INIT_LIST_HEAD(&myobjectlist);
 
     return ret;
