@@ -90,7 +90,7 @@ struct object_store *insert_object(__u64 offset) {
 
     struct object_store *new = (struct object_store*)kmalloc(sizeof(struct object_store),GFP_KERNEL);
     INIT_LIST_HEAD(&new->head_of_list);
-    mutex_init(&new->mutex);
+    mutex_init(&new->resource_lock);
 	memset(new, 0, sizeof(struct object_store));
 	new->size = 0;
 	new->offset = offset;
@@ -112,7 +112,7 @@ void delete_object(__u64 offset) {
 
  	list_for_each_safe(pos, n, head)
 */	
-	struct list_head *pos = NULL 
+	struct list_head *pos = NULL ;
     struct list_head *temp_store = NULL;
 	printk("deleting the list using list_for_each_safe()\n");	
 /*4*/	list_for_each_safe(pos, temp_store, &myobjectlist) {
@@ -136,12 +136,14 @@ void delete_list(void) {
     */	
     struct list_head *pos = NULL; 
     struct list_head *temp_store = NULL;
+    unsigned long obj_virt_addr = 0;
     printk("deleting the whole linked-list data structure\n");
     
 /*5*/    list_for_each_safe(pos, temp_store, &myobjectlist) {
-            kfree((void *)pos->virt_addr);
-            pos->virt_addr = 0;
-            pos->size=0;
+            obj_virt_addr = (struct object_store *)pos->virt_addr;
+            kfree(((void *)obj_virt_addr);
+            //pos->virt_addr = 0;
+            //pos->size=0;
             list_del(pos);
             kfree(pos);	
     }	
