@@ -80,6 +80,7 @@ struct object_store *get_object(__u64 offset) {
     list_for_each(pos, &myobjectlist){
         res = (struct object_store *) pos;
         if(res->offset == offset) {
+            printk(" offset: %llu found in list\n", offset);
             return res;
         }
     }
@@ -171,6 +172,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
         //create node in link list
         object = insert_object(offset);
     }
+    printk("calling kmalloc with offset %llu \n", offset);
     if(object->virt_addr == 0){
         object->virt_addr = (unsigned long)kmalloc(size, GFP_KERNEL);
         memset((void *)object->virt_addr, 0, size);
