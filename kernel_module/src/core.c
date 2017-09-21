@@ -179,7 +179,7 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
     // make entry in page table of process
     printk("calling remap_pfn_range with offset %llu \n", offset);
     if (remap_pfn_range(vma, start_address, obj_phy_addr,
-        end_address - start_address,
+        size,
         vma->vm_page_prot))
         return -EAGAIN;
     printk(KERN_INFO "exit npheap_mmap\n");
