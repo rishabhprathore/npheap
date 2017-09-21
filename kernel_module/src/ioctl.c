@@ -128,7 +128,7 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
     k_cmd.size = object->size;
     if (copy_to_user((void __user *) user_cmd, &k_cmd, sizeof(struct npheap_cmd)))
         return -EFAULT;
-    printk("Leaving getsize for offset : %llu size : %llu\n", offset->size);
+    printk("Leaving getsize for offset : %llu size : %llu\n", offset,offset->size);
     return object->size;
 }
 long npheap_delete(struct npheap_cmd __user *user_cmd)
