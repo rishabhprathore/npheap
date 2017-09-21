@@ -74,38 +74,28 @@ void list_print(void) {
 // Searches for the desired object-id
 struct object_store *get_object(__u64 offset) {
     
-    /* This macro creates a for loop that executes once with cursor pointing at
-       each successive entry in the list. Be careful about changing the list while
-       iterating through it.
-       @pos: the &struct list_head to use as a loop cursor
-       @head: the head for your list
+    struct list_head *pos = NULL;
+    printk("Searching the list using list_for_each()\n");
     
-           list_for_each(pos, head)
-     */
-        struct list_head *pos = NULL;
-        printk("Searching the list using list_for_each()\n");
-        
-/*2*/        list_for_each(pos, &myobjectlist){
-    
-            if(((struct object_store *)pos)->offset == offset) {
-                return (((struct object_store *)pos));
-            }
-        
+    list_for_each(pos, &myobjectlist){
+
+        if(((struct object_store *)pos)->offset == offset) {
+            return (((struct object_store *)pos));
         }
-        printk("This should not get printed");
-        return NULL;
+    
     }
+    printk("This should not get printed");
+    return NULL;
+}
 
 // Inserts a Node at tail of Doubly linked list
 struct object_store *insert_object(__u64 offset) {
     printk("Inside insert_object \n");
     struct object_store *new = (struct object_store*)kmalloc(sizeof(struct object_store),GFP_KERNEL);
+    memset(new, 0, sizeof(struct object_store));
     INIT_LIST_HEAD(&new->head_of_list);
     mutex_init(&new->resource_lock);
-	memset(new, 0, sizeof(struct object_store));
-	new->size = 0;
 	new->offset = offset;
-    new->virt_addr = 0;
     
 	
     list_add_tail(&new->head_of_list, &myobjectlist);
