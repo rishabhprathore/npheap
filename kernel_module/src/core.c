@@ -46,8 +46,6 @@
 
 extern struct miscdevice npheap_dev;
 
-
-
 struct object_store {
 	struct list_head head_of_list;  // kernel's list structure 
 	struct mutex resource_lock;
@@ -56,12 +54,11 @@ struct object_store {
 	unsigned long virt_addr;
 };
 
-struct list_head myobjectlist;		// Declaration-- of List Head
-
+struct list_head myobjectlist;		// global list head
+struct mutex list_lock;
 
 // Print nodes of linked list
 void list_print(void) {
-    
     struct list_head *pos = NULL;
     printk("\nPrinting contents of the linked list:\n");
 
@@ -90,15 +87,18 @@ struct object_store *get_object(__u64 offset) {
 
 // Inserts a Node at tail of Doubly linked list
 struct object_store *insert_object(__u64 offset) {
+
     printk("Inside insert_object for offset: %llu\n", offset);
+    
     struct object_store *new = (struct object_store*)kmalloc(sizeof(struct object_store),GFP_KERNEL);
     memset(new, 0, sizeof(struct object_store));
     INIT_LIST_HEAD(&new->head_of_list);
     mutex_init(&new->resource_lock);
 	new->offset = offset;
     
-	
+	mutex_lock(&list_lock);
     list_add_tail(&new->head_of_list, &myobjectlist);
+    mutex_unlock(&list_lock);
     printk("Leaving insert_object \n");
     list_print();
     return new;
@@ -109,17 +109,11 @@ struct object_store *insert_object(__u64 offset) {
 
 // Deletes an entry from the list 
 void delete_object(__u64 offset) {
-
-/* @pos:	the &struct list_head to use as a loop cursor.
- * @n:		another &struct list_head to use as temporary storage
- * @head:	the head for your list.
-
- 	list_for_each_safe(pos, n, head)
-*/	
+	
 	struct list_head *pos = NULL ;
     struct list_head *temp_store = NULL;
 	printk("deleting the list using list_for_each_safe()\n");	
-/*4*/	list_for_each_safe(pos, temp_store, &myobjectlist) {
+/	list_for_each_safe(pos, temp_store, &myobjectlist) {
 
 		if(((struct object_store *)pos)->offset == offset) {
 			list_del(pos);
@@ -132,12 +126,6 @@ void delete_object(__u64 offset) {
 // Deletes the entire linked-list
 void delete_list(void) {
     
-    /* @pos:	the &struct list_head to use as a loop cursor.
-     * @n:		another &struct list_head to use as temporary storage
-     * @head:	the head for your list.
-    
-         list_for_each_safe(pos, n, head)
-    */	
     struct list_head *pos = NULL; 
     struct list_head *temp_store = NULL;
     unsigned long obj_virt_addr = 0;
@@ -206,6 +194,7 @@ int npheap_init(void)
     else
         printk(KERN_ERR "\"npheap\" misc device installed\n");
         /* MOVE TO npheap_init() ---------------------------> */ 
+        mutex_init(&insert_lock);
         INIT_LIST_HEAD(&myobjectlist);
 
     return ret;

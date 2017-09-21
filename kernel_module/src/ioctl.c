@@ -133,7 +133,6 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
 }
 long npheap_delete(struct npheap_cmd __user *user_cmd)
 {
-    
     struct npheap_cmd  k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
@@ -147,6 +146,7 @@ long npheap_delete(struct npheap_cmd __user *user_cmd)
     if (!object)
     {   
         // object should exist
+
         return -EFAULT;
     }
     if(object->virt_addr !=0){
