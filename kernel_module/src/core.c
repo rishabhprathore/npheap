@@ -97,7 +97,8 @@ struct object_store *insert_object(__u64 offset) {
 
     printk("Inside insert_object for offset: %llu\n", offset);
     
-    struct object_store *new = (struct object_store*)kmalloc(sizeof(struct object_store),GFP_KERNEL);
+    struct object_store *new = NULL;
+    new = (struct object_store*)kmalloc(sizeof(struct object_store),GFP_KERNEL);
     memset(new, 0, sizeof(struct object_store));
     INIT_LIST_HEAD(&new->head_of_list);
     mutex_init(&new->resource_lock);
@@ -152,11 +153,13 @@ void delete_list(void) {
 
 int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
 {
-    printk(KERN_INFO "enter npheap_mmap\n");
+    __u64 size = 0;
+    __u64 offset = 0;
     struct object_store *object = NULL; 
+    printk(KERN_INFO "enter npheap_mmap\n");
     // store properties of vma 
-    __u64 offset = vma->vm_pgoff;
-    __u64 size = vma->vm_end - vma->vm_start;
+    offset = vma->vm_pgoff;
+    size = vma->vm_end - vma->vm_start;
     unsigned long start_address = vma->vm_start;
     unsigned long end_address = vma->vm_end;
     unsigned long obj_phy_addr = 0;
