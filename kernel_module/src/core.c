@@ -209,7 +209,7 @@ int npheap_init(void)
 
 void npheap_exit(void)
 {   
-    // free all nodes of list
+    // free all nodes of list and memory
     list_print();
     delete_list();
     list_print();
