@@ -95,9 +95,9 @@ struct object_store *get_object(__u64 offset) {
 // Inserts a Node at tail of Doubly linked list
 struct object_store *insert_object(__u64 offset) {
 
-    printk("Inside insert_object for offset: %llu\n", offset);
     
     struct object_store *new = NULL;
+    printk("Inside insert_object for offset: %llu\n", offset);
     new = (struct object_store*)kmalloc(sizeof(struct object_store),GFP_KERNEL);
     memset(new, 0, sizeof(struct object_store));
     INIT_LIST_HEAD(&new->head_of_list);
@@ -156,13 +156,14 @@ int npheap_mmap(struct file *filp, struct vm_area_struct *vma)
     __u64 size = 0;
     __u64 offset = 0;
     struct object_store *object = NULL; 
+    unsigned long start_address = 0;
+    unsigned long obj_phy_addr = 0;
     printk(KERN_INFO "enter npheap_mmap\n");
     // store properties of vma 
     offset = vma->vm_pgoff;
     size = vma->vm_end - vma->vm_start;
-    unsigned long start_address = vma->vm_start;
-    unsigned long end_address = vma->vm_end;
-    unsigned long obj_phy_addr = 0;
+    start_address = vma->vm_start;
+    
 
     // check if object exists in list
     object = get_object(offset);
