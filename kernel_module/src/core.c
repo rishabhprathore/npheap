@@ -55,7 +55,7 @@ struct object_store {
 };
 
 struct list_head myobjectlist;		// global list head
-struct mutex list_lock;
+struct mutex list_lock;             // lock for list modifications
 
 // Print nodes of linked list
 void list_print(void) {
