@@ -29,6 +29,11 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
+
+
+// Project 1: Rishabh Rathore, UNITY-ID: rrathor; Aasheesh Tandon, UNITY-ID: atandon;
+
+
 #include "npheap.h"
 
 #include <asm/uaccess.h>
@@ -63,9 +68,7 @@ long npheap_lock(struct npheap_cmd __user *user_cmd){
     struct npheap_cmd k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
-    if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd))){
-        return -EFAULT;
-    }
+    copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd));
     offset = k_cmd.offset/PAGE_SIZE;
     object = get_object(offset);
     if (!object)
@@ -73,9 +76,6 @@ long npheap_lock(struct npheap_cmd __user *user_cmd){
         // create a new object if does not exist
         printk("Calling insert_object from npheap_lock\n");
         object = insert_object(offset);
-        if (!object)
-        // object creation failed
-            return -EAGAIN;
     }
 
     mutex_lock(&object->resource_lock);
@@ -90,18 +90,11 @@ long npheap_unlock(struct npheap_cmd __user *user_cmd)
     struct object_store *object = NULL;
     __u64 offset = 0;
 
-    if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
-        return -EFAULT;
+    copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd));
 
     offset = k_cmd.offset/PAGE_SIZE;  
 
     object = get_object(offset);
-    if (!object)
-    {   
-        // object should exist
-        return -EFAULT;
-    }
-
     mutex_unlock(&object->resource_lock);
     printk(KERN_INFO "exit npheap_unlock\n");
     return 0;
@@ -114,41 +107,28 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
     struct object_store *object = NULL;
     __u64 offset = 0;
 
-    if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
-        return -EFAULT;
+    copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd));
 
     offset = k_cmd.offset/PAGE_SIZE;
     printk("Inside getsize for offset : %llu \n", offset);
     object = get_object(offset);
-    if (!object)
-    {   
-        // object should exist
-        return -EFAULT;
-    }
     k_cmd.size = object->size;
-    if (copy_to_user((void __user *) user_cmd, &k_cmd, sizeof(struct npheap_cmd)))
-        return -EFAULT;
     printk("Leaving getsize for offset : %llu size : %llu\n", offset,object->size);
     return object->size;
 }
+
 long npheap_delete(struct npheap_cmd __user *user_cmd)
 {
+    
     struct npheap_cmd  k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
 
-    if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
-        return -EFAULT;
+    copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd));
 
     offset = k_cmd.offset/PAGE_SIZE;
     printk("Inside delete for offset : %llu \n", offset);
     object = get_object(offset);
-    if (!object)
-    {   
-        // object should exist
-
-        return -EFAULT;
-    }
     if(object->virt_addr !=0){
         kfree((void *) object->virt_addr);
     }
