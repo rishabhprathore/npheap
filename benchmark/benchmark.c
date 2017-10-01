@@ -79,7 +79,6 @@ int main(int argc, char *argv[])
     npheap_delete(devfd,i);
     fprintf(fp,"D\t%d\t%ld\t%d\t%lu\t%s\n",pid,current_time.tv_sec * 1000000 + current_time.tv_usec,i,strlen(mapped_data),mapped_data);
     npheap_unlock(devfd,i);
-    
     close(devfd);
     if(pid != 0)
         wait(NULL);
