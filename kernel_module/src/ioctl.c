@@ -29,6 +29,11 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
+
+
+// Project 1: Rishabh Rathore, UNITY-ID: rrathor; Aasheesh Tandon, UNITY-ID: atandon;
+
+
 #include "npheap.h"
 
 #include <asm/uaccess.h>
@@ -47,105 +52,90 @@
 
 struct object_store {
 	struct list_head head_of_list;  // kernel's list structure 
-	struct mutex resource_lock;
+	//struct mutex resource_lock;
 	__u64 size;
 	__u64 offset;
 	unsigned long virt_addr;
 };
 
+extern struct mutex list_lock; 
 struct object_store *insert_object(__u64 offset);
 void delete_object(__u64 offset);
 struct object_store *get_object(__u64 offset);
 
 // If exist, return the data.
 long npheap_lock(struct npheap_cmd __user *user_cmd){
+    printk("enter npheap_lock\n");
     struct npheap_cmd k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
-    if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd))){
-        return -EFAULT;
-    }
+    copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd));
     offset = k_cmd.offset/PAGE_SIZE;
     object = get_object(offset);
     if (!object)
     {
         // create a new object if does not exist
+        printk("Calling insert_object from npheap_lock\n");
         object = insert_object(offset);
-        if (!object)
-        // object creation failed
-            return -EAGAIN;
     }
 
-    mutex_lock(&object->resource_lock);
+    mutex_lock(&list_lock);
+    printk(KERN_INFO "exit npheap_lock\n");
     return 0;
 }     
 
 long npheap_unlock(struct npheap_cmd __user *user_cmd)
 {
+    printk(KERN_INFO "enter npheap_unlock\n");
     struct npheap_cmd  k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
 
-    if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
-        return -EFAULT;
+    copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd));
 
     offset = k_cmd.offset/PAGE_SIZE;  
 
     object = get_object(offset);
-    if (!object)
-    {   
-        // object should exist
-        return -EFAULT;
-    }
-
-    mutex_unlock(&object->resource_lock);
+    mutex_unlock(&list_lock);
+    printk(KERN_INFO "exit npheap_unlock\n");
     return 0;
 }
 
 long npheap_getsize(struct npheap_cmd __user *user_cmd)
 {
+    
     struct npheap_cmd k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
 
-    if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
-        return -EFAULT;
+    copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd));
 
     offset = k_cmd.offset/PAGE_SIZE;
-
+    printk("Inside getsize for offset : %llu \n", offset);
     object = get_object(offset);
-    if (!object)
-    {   
-        // object should exist
-        return -EFAULT;
-    }
     k_cmd.size = object->size;
-    if (copy_to_user((void __user *) user_cmd, &k_cmd, sizeof(struct npheap_cmd)))
-        return -EFAULT;
+    printk("Leaving getsize for offset : %llu size : %llu\n", offset,object->size);
     return object->size;
 }
+
 long npheap_delete(struct npheap_cmd __user *user_cmd)
 {
+    
     struct npheap_cmd  k_cmd;
     struct object_store *object = NULL;
     __u64 offset = 0;
 
-    if (copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd)))
-        return -EFAULT;
+    copy_from_user(&k_cmd, (void __user *) user_cmd, sizeof(struct npheap_cmd));
 
     offset = k_cmd.offset/PAGE_SIZE;
-
+    printk("Inside delete for offset : %llu \n", offset);
     object = get_object(offset);
-    if (!object)
-    {   
-        // object should exist
-        return -EFAULT;
-    }
     if(object->virt_addr !=0){
         kfree((void *) object->virt_addr);
-        object->virt_addr = 0;
-        object->size = 0;
     }
+    object->virt_addr = 0;
+    object->size = 0;
+    printk("Leaving delete for offset : %llu \n", offset);
     return 0;
 }
 
