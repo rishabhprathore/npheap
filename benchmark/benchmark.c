@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
             fprintf(stderr,"Failed in npheap_alloc()\n");
             exit(1);
         }
-        memset(mapped_data, 0, 4096);
+        memset(mapped_data, 0, size);
         a = rand()+1;
         gettimeofday(&current_time, NULL);
         for(j=0; j < size-10; j=strlen(mapped_data))
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     i = rand()%number_of_objects;
     npheap_lock(devfd,i);
     npheap_delete(devfd,i);
-    fprintf(fp,"D\t%d\t%ld\t%d\t%lu\t%s\n",getpid(),current_time.tv_sec * 1000000 + current_time.tv_usec,i,strlen(mapped_data),mapped_data);
+    fprintf(fp,"D\t%d\t%ld\t%d\t%lu\t%s\n",pid,current_time.tv_sec * 1000000 + current_time.tv_usec,i,strlen(mapped_data),mapped_data);
     npheap_unlock(devfd,i);
     
     close(devfd);
