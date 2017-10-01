@@ -52,12 +52,13 @@
 
 struct object_store {
 	struct list_head head_of_list;  // kernel's list structure 
-	struct mutex resource_lock;
+	//struct mutex resource_lock;
 	__u64 size;
 	__u64 offset;
 	unsigned long virt_addr;
 };
 
+extern struct mutex list_lock; 
 struct object_store *insert_object(__u64 offset);
 void delete_object(__u64 offset);
 struct object_store *get_object(__u64 offset);
@@ -78,7 +79,7 @@ long npheap_lock(struct npheap_cmd __user *user_cmd){
         object = insert_object(offset);
     }
 
-    mutex_lock(&object->resource_lock);
+    mutex_lock(&list_lock);
     printk(KERN_INFO "exit npheap_lock\n");
     return 0;
 }     
@@ -95,7 +96,7 @@ long npheap_unlock(struct npheap_cmd __user *user_cmd)
     offset = k_cmd.offset/PAGE_SIZE;  
 
     object = get_object(offset);
-    mutex_unlock(&object->resource_lock);
+    mutex_unlock(&list_lock);
     printk(KERN_INFO "exit npheap_unlock\n");
     return 0;
 }

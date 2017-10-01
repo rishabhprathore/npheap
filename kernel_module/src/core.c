@@ -52,7 +52,7 @@ extern struct miscdevice npheap_dev;
 
 struct object_store {
 	struct list_head head_of_list;  // kernel's list structure 
-	struct mutex resource_lock;
+	//struct mutex resource_lock;
 	__u64 size;
 	__u64 offset;
 	unsigned long virt_addr;
@@ -82,12 +82,12 @@ struct object_store *get_object(__u64 offset) {
     list_for_each(pos, &myobjectlist){
         res = (struct object_store *) pos;
         if(res->offset == offset) {
-            mutex_unlock(&list_lock);
+            //mutex_unlock(&list_lock);
             printk(" offset: %llu found in list\n", offset);
             return res;
         }
     }
-    mutex_unlock(&list_lock);
+    //mutex_unlock(&list_lock);
     printk("%llu not found in list\n", offset);
     return NULL;
 }
@@ -104,9 +104,9 @@ struct object_store *insert_object(__u64 offset) {
     mutex_init(&new->resource_lock);
 	new->offset = offset;
     
-	mutex_lock(&list_lock);
+	//mutex_lock(&list_lock);
     list_add_tail(&new->head_of_list, &myobjectlist);
-    mutex_unlock(&list_lock);
+    //mutex_unlock(&list_lock);
     printk("Leaving insert_object \n");
     list_print();
     return new;
