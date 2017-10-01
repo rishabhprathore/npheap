@@ -58,7 +58,7 @@ struct object_store {
 	unsigned long virt_addr;
 };
 
-extern struct mutex list_lock; 
+struct mutex list_lock; 
 struct object_store *insert_object(__u64 offset);
 void delete_object(__u64 offset);
 struct object_store *get_object(__u64 offset);
