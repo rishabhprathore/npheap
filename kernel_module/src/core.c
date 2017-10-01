@@ -63,7 +63,7 @@ struct mutex list_lock;             // lock for list modifications
 
 // Print nodes of linked list
 void list_print(void) {
-    struct list_head *pos = NULL;
+    struct list_head *pos = NULL;   
     printk("\nPrinting contents of the linked list:\n");
 
     list_for_each(pos, &myobjectlist) {
@@ -101,7 +101,7 @@ struct object_store *insert_object(__u64 offset) {
     new = (struct object_store*)kmalloc(sizeof(struct object_store),GFP_KERNEL);
     memset(new, 0, sizeof(struct object_store));
     INIT_LIST_HEAD(&new->head_of_list);
-    mutex_init(&new->resource_lock);
+    //mutex_init(&new->resource_lock);
 	new->offset = offset;
     
 	//mutex_lock(&list_lock);
