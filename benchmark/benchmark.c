@@ -37,12 +37,12 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Device open failed");
         exit(1);
     }
-    srand((int)time(NULL)+(int)getpid());
     // Writing to objects
     pid=-1;
     for(i=0;i<(number_of_processes-1) && pid != 0;i++)
     {
         pid=fork();
+        srand((int)time(NULL)+(int)getpid());
     }
     sprintf(filename,"npheap.%d.log",(int)getpid());
     fp = fopen(filename,"w");
